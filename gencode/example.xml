@@ -1,0 +1,102 @@
+<root>
+	<class name = "DBStream" default="true" copy="true" assign="true" cppdir="genfile/" annotation="测试一下类中文注释g++编译有没有问题" argconstor="true">
+		<include name='#include "gametype.h"' />
+		<pubfun name="virtual bool Write(const char* buf, int len);" annotation="写一个函数"/>
+		<pubfun name="virtual bool Read(char* buf, int len);" />
+		<value name="m_pCharArr" type="char*" authority="private" default="0"  />
+		<value name="m_nCharLen" type="int" authority="private" default="0"  />
+		<value name="m_nMaxCharLen" type="int" authority="private" default="0" annotation="测试一下变量注释"  />
+	</class>
+	<class name = "Costomdes" default="true" costomdes="costomdes" gendir="genfile/">
+        <pubfun name="virtual ~Costomdes();" />
+	</class>
+	<class name = "CostomdesDerived" default="true" inheritance="Costomdes" costomdes="costomdes" gendir="genfile/">
+		<include name='#include "Costomdes.h"' />
+        <pubfun name="virtual ~CostomdesDerived();" />
+	</class>
+	<class name = "TemplateTest" default="true" template="&lt;class T&gt;" >
+	</class>
+	<class name = "Remind" default="true" copy="true" assign="true" destory="true" polymorphic="true" namespace="RemindModel" gendir="genfile/">
+        <include name='#include &lt;string.h&gt;' />
+		<include name='#include "RemindTimer.h"' />
+		<declareclass name="ObjPlayer" outsideclass="true"/>	
+		<pubfun name="bool operator &lt; (const Remind &amp; rhf)const;" />
+		<pubfun name="void SetSender(char * tsSender);" />
+		<pubfun name="char * GetSender();" />
+		<pubfun name="virtual void Copy(const Remind &amp; tRemind);" />
+		<pubfun name="virtual void OnKickUp(ObjPlayer * tpObjPlayer);" />
+		<prvfun name="void TestPrivateFunction();" annotation="测试私有函数" />
+		<pubfun name="void PubfunBegin();" group="begin"/>
+		<pubfun name="void PubfunBody();" group="body"/>
+		<pubfun name="void PubfunEnd();" group="end"/>
+		<prvfun name="void PrvfunBegin();" group="begin"/>
+		<prvfun name="void PrvfunBody();" group="body"/>
+		<prvfun name="void PrvfunEnd();" group="end"/>
+		<value name="m_oTimer" type="RemindTimer" authority="private"  retref="true" />
+		<value name="m_nFirstStrLen" type="int" authority="private" default="0" />
+		<value name="m_sFirstStr" type="char[16]" authority="private" capacity="16" rettype="char*" collectionsize="m_nFirstStrLen"/>
+		<value name="m_nSencondLen" type="int" authority="private" default="0" />
+		<value name="m_sSencondStr" type="char[16]" authority="private" capacity="16" rettype="char*" collectionsize="m_nSencondLen"/>
+		<value name="m_nType" type="int" authority="private" default="-1" />
+		<value name="m_nSecondType" type="int" authority="private" default="-1" />
+		<value name="m_nTableIdx" type="int" authority="private" default="-1" />
+	</class>
+	<class name = "RemindTimer" default="true" namespace="RemindModel" gendir="genfile/">
+		<include name='#include "gametype.h"' />
+		<pubfun name="bool operator == (const RemindTimer &amp; rhf)const;" />
+		<pubfun name="bool operator > (const RemindTimer &amp; rhf)const;" />
+		<pubfun name="bool operator &lt; (const RemindTimer &amp; rhf)const;" />
+		<value name="m_nYear" type="int" authority="private" default="0" />
+		<value name="m_nMonth" type="int" authority="private" default="0" />
+		<value name="m_nMonthDay" type="int" authority="private" default="0" />
+	</class>
+	<class name = "RemindBox" default="true" namespace="RemindModel" cleanup="true" gendir="genfile/" >
+		<include name='#include "Mail.h"' />
+		<declareclass name="ObjPlayer" outsideclass="true"/>	
+		<pubfun name="Remind &amp; GetRemind( int tIdex){static Remind tRemind; return tRemind;}" />
+		<value name="m_pObjPlayer" type="ObjPlayer*" authority="private" default="0" />
+	</class>
+	<class name = "MailBox" default="true" polymorphic="true"  namespace="RemindModel" inheritance="RemindBox" cleanup="true" gendir="genfile/">
+		<include name='#include "RemindBox.h"' />
+		<include name='#include "Mail.h"' />
+		<pubfun name="Remind &amp; GetRemind(int tIdex);" />
+		<value name="m_nMailCount" type="int" authority="private" default="0" />
+		<value name="m_aMail" type="Mail[100]" authority="private"  capacity="100" rettype="Mail*" collectionsize="m_nMailCount"/>
+	</class>
+	<class name = "RemindBoxManager"  default="true" polymorphic="true"  namespace="RemindModel"  cleanup="true" gendir="genfile/">
+		<include name='#include "MailBox.h"' />
+		<pubfun name="void SendRemindBox();" />
+		<pubfun name="void ClearOutOfDateRemind();" />
+		<pubfun name="void SetBoxObjPlayer(ObjPlayer*  tpObjPlayer);" />
+		<pubfun name="void AddRemind(int tTableIdx, char * szFirst, char* szSecond);" />
+		<value name="m_oMailBox" type="MailBox" authority="private" retref="true"/>
+		<value name="m_pObjPlayer" type="ObjPlayer*" authority="private" default="0" />
+	</class>
+	<class name = "Mail"  default="true" destory="true" polymorphic="true" namespace="RemindModel" inheritance="Remind"  gendir="genfile/" csharpclassdir="genfile/">
+		<include name='#include "Remind.h"'/>
+		<pubfun name="virtual void Copy(const Remind &amp; tRemind);" />
+	</class>
+	<class name = "StdTest" default="true" destory="true"  namespace="test" annotation="就是测试一下字符集" >
+		<include name='#include &lt;map&gt;'/>
+		<include name='#include &lt;list&gt;'/>
+		<include name='#include &lt;vector&gt;'/>
+		<typedef name='typedef std::map&lt;int, int&gt; testmap;' />
+		<value name="m_mMap" type="testmap" authority="private"  std="std"/>
+		<value name="m_lList" type="std::list&lt;int&gt;" authority="private" std="std" />
+		<value name="m_vVec" type="std::vector&lt;int&gt;" authority="private"  std="std"/>
+	</class>
+	<class name = "GameType" default="true" filename="gametype" gendir="genfile/" >
+	</class>
+	<class name = "TopItem" default="true" namespace="top" gendir="genfile/" >
+		<pubfun name="virtual bool operator == (const TopItem &amp; rhf)const;" />
+		<pubfun name="virtual bool operator > (const TopItem &amp; rhf)const;" />
+		<pubfun name="virtual bool operator &lt; (const TopItem &amp; rhf)const;" />
+		<value name="m_nIndex" type="int" authority="private" default="0" />
+		<value name="m_nGUID" type="int" authority="private" default="0" />
+	</class>
+	<class name = "TestDefineLen" default="true" gendir="genfile/" >
+		<typedef name="static const int TEST_LEN = 100;"/>
+		<value name="m_aCollectionLen" type="int" authority="private" default="0"/>
+		<value name="m_aCollection" type="int[TEST_LEN]" authority="private" collectionsize="m_aCollectionLen" capacity="TEST_LEN" rettype="int*"/>
+	</class>
+</root>
