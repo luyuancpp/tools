@@ -2,12 +2,12 @@ syntax = "proto3";
 
 message GtestTableRow
 {
-	 int32 id = 1;
-	 int32 iscopy = 2;
-	 int32 level_limit = 3;
+	 uint32 id = 1;
+	 uint32 iscopy = 2;
+	 uint32 level_limit = 3;
 	 string name = 4;
-	 int32 sequence_number = 5;
-	 repeated int32 thread_id = 6;
+	 uint32 sequence_number = 5;
+	 repeated uint32 thread_id = 6;
 }
 
 message GtestTable
@@ -15,4 +15,15 @@ message GtestTable
 	 repeated GtestTableRow data = 1;
 }
 
+
+message ConditionTableRow
+{
+	 uint32 id = 1;
+	 repeated uint32 condtion1 = 2;
+}
+
+message CondtionTable
+{
+	 repeated ConditionTableRow data = 1;
+}
 

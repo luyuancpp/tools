@@ -13,9 +13,9 @@ using namespace std;
 
 TEST(JsonTableTest, LoadJson)
 {
-	EXPECT_TRUE(g_oTableManager.LoadJson());
+	EXPECT_TRUE(gTableManager.LoadJson());
 
-	const GtestTableRow * pData = g_oTableManager.GetRow<GtestTable, GtestTableRow>(1);
+	const GtestTableRow * pData = gTableManager.GetRow<GtestTable, GtestTableRow>(1);
 	if (pData != NULL)
 	{
 	cout << "id :" << pData->id() << endl;
@@ -32,9 +32,9 @@ TEST(JsonTableTest, LoadJson)
 
 TEST(JsonTableTest, ReLoadJson)
 {
-	EXPECT_TRUE(g_oTableManager.ReLoadJson());
+	EXPECT_TRUE(gTableManager.ReLoadJson());
 
-	const GtestTableRow * pData = g_oTableManager.GetRow<GtestTable, GtestTableRow>(1);
+	const GtestTableRow * pData = gTableManager.GetRow<GtestTable, GtestTableRow>(1);
 	if (pData != NULL)
 	{
 		cout << "id :" << pData->id() << endl;
@@ -51,9 +51,9 @@ TEST(JsonTableTest, ReLoadJson)
 
 TEST(JsonTableTest, ListTable)
 {
-	EXPECT_TRUE(g_oTableManager.ReLoadJson());
+	EXPECT_TRUE(gTableManager.ReLoadJson());
 
-	std::vector<const GtestTableRow *> pData = g_oTableManager.GetRowList<GtestTable, GtestTableRow>();
+	std::vector<const GtestTableRow *> pData = gTableManager.GetRowList<GtestTable, GtestTableRow>();
 
 	for (std::vector<const GtestTableRow *>::iterator it = pData.begin(); it != pData.end(); ++it)
 	{

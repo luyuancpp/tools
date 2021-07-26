@@ -2,7 +2,7 @@
 
 #include "json.pb.h"
 
-TableManager g_oTableManager;
+TableManager gTableManager;
 
 static std::string jsdir("./Server/Tableig/Json");
 

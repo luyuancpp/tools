@@ -188,5 +188,5 @@ private:
 	uint32_t m_nTableIndex;
 };
 
-extern  TableManager g_oTableManager;
+extern  TableManager gTableManager;
 
