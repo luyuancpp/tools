@@ -77,18 +77,26 @@ private:
 	std::string GetJsString()
 	{
 		//http://www.cplusplus.com/reference/istream/istream/read/
-        std::string contents;
-        std::ifstream in(m_sFileName, std::ios::in | std::ios::binary);
-        if (in)
-        {
-            in.seekg(0, std::ios::end);
-            contents.resize(in.tellg());
-            in.seekg(0, std::ios::beg);
-            in.read(&contents[0], contents.size());
-            in.close();
-            return(contents);
-        }
-        return contents;
+		std::ifstream is(m_sFileName, std::ifstream::binary);
+		std::string jssbuffer;
+		if (is) {
+			// get length of file:
+			is.seekg(0, is.end);
+			int length = (int)is.tellg();
+			length = length + 1;
+			is.seekg(0, is.beg);
+			char * buffer = new char[length];
+			memset(buffer, 0, length);
+			// read data as a block:
+			is.read(buffer, length);
+			is.close();
+			// ...buffer contains the entire file...
+			jssbuffer = buffer;
+			jssbuffer.erase(remove_if(jssbuffer.begin(), jssbuffer.end(), iscntrl), jssbuffer.end());
+			jssbuffer.erase(remove_if(jssbuffer.begin(), jssbuffer.end(), isspace), jssbuffer.end());
+			delete[] buffer;	
+		}
+		return jssbuffer;
 	}
 
 private:
