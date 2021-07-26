@@ -17,35 +17,35 @@ public:
 	typedef std::shared_ptr<google::protobuf::Message> row_pb_ptr_type;
 	typedef std::unordered_map<uint32_t, row_pb_ptr_type> pb_map_type;
 public:
-	Table(std::string & Tablename, uint32_t Tableid)
+	Table(std::string & file_name, uint32_t table_id)
 		: 
-		  m_sFileName(Tablename),
-		  m_nTableId(Tableid)
+		  file_name_(file_name),
+		  table_id_(table_id)
 	{}
 
 	template<class TablePB, class RowPB>
 	bool Load()
 	{
 		std::string jsbuffer = this->GetJsString();
-		TablePB Tablepb;
-		if (google::protobuf::util::Status::OK != google::protobuf::util::JsonStringToMessage(jsbuffer, &Tablepb))
+		TablePB tpb;
+		if (google::protobuf::util::Status::OK != google::protobuf::util::JsonStringToMessage(jsbuffer, &tpb))
 		{
 			// log
 			return false;
 		}
 
-		for (int32_t i = 0; i < Tablepb.data_size(); ++i)
+		for (int32_t i = 0; i < tpb.data_size(); ++i)
 		{
-			pb_map_type::iterator it = m_vDatas.find(Tablepb.data(i).id());
-			if (it != m_vDatas.end())
+			pb_map_type::iterator it = datas_.find(tpb.data(i).id());
+			if (it != datas_.end())
 			{
-				it->second->CopyFrom(Tablepb.data(i));
+				it->second->CopyFrom(tpb.data(i));
 			}
 			else
 			{
 				row_pb_ptr_type prowdata(new RowPB);
-				prowdata->CopyFrom(Tablepb.data(i));
-				m_vDatas.emplace(Tablepb.data(i).id(), std::move(prowdata));
+				prowdata->CopyFrom(tpb.data(i));
+				datas_.emplace(tpb.data(i).id(), std::move(prowdata));
 			}
 		}
 		return true;
@@ -54,8 +54,8 @@ public:
 	template< class RowPB>
 	const RowPB * GetRow(uint32_t id)
 	{
-		pb_map_type::iterator it = m_vDatas.find(id);
-		if (it == m_vDatas.end())
+		pb_map_type::iterator it = datas_.find(id);
+		if (it == datas_.end())
 		{
 			return nullptr;
 		}
@@ -66,7 +66,7 @@ public:
 	const std::vector<const RowPB *> GetRowList()
 	{
 		std::vector<const RowPB *> ret;
-		for (pb_map_type::iterator it = m_vDatas.begin(); it != m_vDatas.end(); ++it)
+		for (pb_map_type::iterator it = datas_.begin(); it != datas_.end(); ++it)
 		{
 			ret.push_back(static_cast<const RowPB *>(it->second.get()));
 		}
@@ -77,7 +77,7 @@ private:
 	std::string GetJsString()
 	{
 		//http://www.cplusplus.com/reference/istream/istream/read/
-		std::ifstream is(m_sFileName, std::ifstream::binary);
+		std::ifstream is(file_name_, std::ifstream::binary);
 		std::string jssbuffer;
 		if (is) {
 			// get length of file:
@@ -100,9 +100,9 @@ private:
 	}
 
 private:
-	pb_map_type m_vDatas;
-	std::string m_sFileName;
-	uint32_t m_nTableId;
+	pb_map_type datas_;
+	std::string file_name_;
+	uint32_t table_id_;
 };
 
 class TableManager
@@ -113,7 +113,7 @@ public:
 	typedef std::vector<reload_cb_type> reload_cb_list_type;
 public:
 	
-	TableManager() : m_nTableIndex(0){}
+	TableManager() : table_index_(0){}
 
 	bool ReLoadJson()
 	{
@@ -121,7 +121,7 @@ public:
 		{
 			return false;
 		}
-		for (reload_cb_list_type::iterator it = m_vReloadCallback.begin(); it != m_vReloadCallback.end(); ++it)
+		for (reload_cb_list_type::iterator it = reload_callback_.begin(); it != reload_callback_.end(); ++it)
 		{
 			(*it)();
 		}
@@ -132,8 +132,8 @@ public:
 	const RowPB * GetRow(uint32_t id)
 	{
 		TablePB tbpb;
-		Tb_map_type::iterator it = m_vTables.find(tbpb.GetTypeName());
-		if (it == m_vTables.end())
+		Tb_map_type::iterator it = tables.find(tbpb.GetTypeName());
+		if (it == tables.end())
 		{
 			return nullptr;
 		}
@@ -144,8 +144,8 @@ public:
 	std::vector<const RowPB*>  GetRowList()
 	{
 		TablePB tbpb;
-		Tb_map_type::iterator it = m_vTables.find(tbpb.GetTypeName());
-		if (it == m_vTables.end())
+		Tb_map_type::iterator it = tables.find(tbpb.GetTypeName());
+		if (it == tables.end())
 		{
 			std::vector<const RowPB*> ret;
 			return ret;
@@ -163,16 +163,16 @@ private:
 	{
 		bool ret = true;
 		TablePB Tablepb;
-		Tb_map_type::iterator it = m_vTables.find(Tablepb.GetTypeName());
-		if (it == m_vTables.end())
+		Tb_map_type::iterator it = tables.find(Tablepb.GetTypeName());
+		if (it == tables.end())
 		{
-			Table Tb(Tablename, ++m_nTableIndex);
+			Table Tb(Tablename, ++table_index_);
 			ret = Tb.Load<TablePB, RowPB>();
 			if (!ret)
 			{
 				return ret;
 			}
-			m_vTables.emplace(Tablepb.GetTypeName(), std::move(Tb));
+			tables.emplace(Tablepb.GetTypeName(), std::move(Tb));
 		}
 		else
 		{
@@ -183,9 +183,9 @@ private:
 		return ret;
 	}
 private:
-	Tb_map_type m_vTables;
-	reload_cb_list_type m_vReloadCallback;
-	uint32_t m_nTableIndex;
+	Tb_map_type tables;
+	reload_cb_list_type reload_callback_;
+	uint32_t table_index_;
 };
 
 extern  TableManager gTableManager;

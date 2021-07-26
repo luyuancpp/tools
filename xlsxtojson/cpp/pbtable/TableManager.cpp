@@ -20,6 +20,6 @@ bool TableManager::LoadJson()
 
 void TableManager::RegisterReLoadCB(reload_cb_type & cb)
 {
-	m_vReloadCallback.push_back(std::move(cb));
+	reload_callback_.push_back(std::move(cb));
 }
 
