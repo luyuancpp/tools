@@ -22,7 +22,7 @@ message ConditionTableRow
 	 repeated uint32 condtion1 = 2;
 }
 
-message CondtionTable
+message ConditionTable
 {
 	 repeated ConditionTableRow data = 1;
 }
